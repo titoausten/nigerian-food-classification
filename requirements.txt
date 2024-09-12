@@ -1,0 +1,22 @@
+# tensorflow
+
+#matplotlib==3.7.1
+#torch==2.0.0
+#torchvision==0.15.1
+typing_extensions==4.5.0
+requests==2.28.2
+#pandas 
+dvc
+notebook
+numpy
+#seaborn
+python-box==6.0.2
+pyYAML
+tqdm
+ensure==1.0.2
+joblib
+types-PyYAML
+#scipy
+#Flask
+#Flask-Cors
+#-e .
