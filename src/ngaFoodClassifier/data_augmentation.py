@@ -1,7 +1,17 @@
+# Import the ImageFolder class from torchvision.datasets, which allows for loading images from a directory structure
 from torchvision.datasets import ImageFolder
-from torchvision import datasets,transforms
+
+# Import datasets and transforms modules from torchvision for data loading and transformations
+from torchvision import datasets, transforms
+
+# Import random_split and DataLoader from torch.utils.data
+# random_split is used to split datasets into subsets, while DataLoader loads data in batches for training
 from torch.utils.data import random_split, DataLoader
+
+# Import Image from PIL (Python Imaging Library) to handle image processing tasks
 from PIL import Image
+
+# Import os module for interacting with the operating system, used here for tasks like file handling
 import os
 
 #Definition of transforms
