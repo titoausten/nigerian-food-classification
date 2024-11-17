@@ -23,3 +23,12 @@ class DataIngestionConfig:
     source_URL: str             # URL to download the data file from
     local_data_file: Path       # Path where the downloaded file will be saved
     unzip_dir: Path             # Path where the zip file's contents will be extracted
+
+
+@dataclass(frozen=True)
+class DataTransformationConfig:
+    root_dir: Path
+    source_dir: str
+    train_data_dir: str
+    test_data_dir: str
+    batch_size: tuple
