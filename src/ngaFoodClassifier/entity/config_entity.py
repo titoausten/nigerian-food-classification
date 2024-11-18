@@ -28,7 +28,7 @@ class DataIngestionConfig:
 @dataclass(frozen=True)
 class DataTransformationConfig:
     root_dir: Path
-    source_dir: str
-    train_data_dir: str
-    test_data_dir: str
-    batch_size: tuple
+    source_dir: Path
+    train_data_dir: Path
+    test_data_dir: Path
+    batch_size: Path
