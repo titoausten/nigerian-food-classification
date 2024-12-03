@@ -11,3 +11,5 @@ data_transformation:
   source_dir: artifacts/data_ingestion
   train_data_dir: artifacts/data_ingestion/train
   test_data_dir: artifacts/data_ingestion/test
+  train_tensor_dir: artifacts/data_transformation/train_tensor
+  test_tensor_dir: artifacts/data_transformation/test_tensor
