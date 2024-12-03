@@ -63,6 +63,8 @@ class ConfigurationManager:
             source_dir=config.source_dir,
             train_data_dir=config.train_data_dir,
             test_data_dir=config.test_data_dir,
+            train_tensor_dir=config.train_tensor_dir,
+            test_tensor_dir=config.test_tensor_dir,
             batch_size=self.params.BATCH_SIZE
         )
 
