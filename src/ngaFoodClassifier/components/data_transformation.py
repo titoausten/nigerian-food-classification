@@ -14,7 +14,7 @@ class DataTransformation:
     def transform_data(self):
         # Create transforms
         data_transform = transforms.Compose([
-            transforms.Resize((64, 64)), #CHECK FOR RIGHT FIGURES
+            transforms.Resize((224, 224)), #CHECK FOR RIGHT FIGURES
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.RandomRotation(degrees=10),
             transforms.RandomResizedCrop(size=32, scale=(0.8, 1.0)),
