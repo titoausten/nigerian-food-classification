@@ -31,4 +31,6 @@ class DataTransformationConfig:
     source_dir: Path
     train_data_dir: Path
     test_data_dir: Path
+    train_tensor_dir: str
+    test_tensor_dir: str
     batch_size: Path
