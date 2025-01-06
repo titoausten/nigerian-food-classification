@@ -2,7 +2,7 @@ artifacts_root: artifacts
 
 data_ingestion:
   root_dir: artifacts/data_ingestion
-  source_URL: https://data.mendeley.com/datasets/2vktdxfxv7/2
+  source_URL: https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/2vktdxfxv7-2.zip 
   local_data_file: artifacts/data_ingestion/data.zip
   unzip_dir: artifacts/data_ingestion
 
@@ -13,3 +13,4 @@ data_transformation:
   test_data_dir: artifacts/data_ingestion/test
   train_tensor_dir: artifacts/data_transformation/train_tensor
   test_tensor_dir: artifacts/data_transformation/test_tensor
+  
