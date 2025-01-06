@@ -8,9 +8,9 @@ requests==2.28.2
 #pandas 
 dvc
 notebook
-numpy
+numpy<=2.0
 #seaborn
-python-box==6.0.2
+python-box
 pyYAML
 tqdm
 ensure
