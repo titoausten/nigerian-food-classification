@@ -2,4 +2,4 @@
 /logs
 /.venv
 setup.py
-/artifacts/*
+/artifacts
