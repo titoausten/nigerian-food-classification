@@ -14,3 +14,10 @@ data_transformation:
   train_tensor_dir: artifacts/data_transformation/train_tensor
   test_tensor_dir: artifacts/data_transformation/test_tensor
   
+model_training:
+  root_dir: artifacts/training
+  source_dir: artifacts/data_transformation/train_tensor
+  source_dir_test: artifacts/data_transformation/test_tensor
+  model_dir: artifacts/training/model
+  model_metrics_dir: artifacts/training/model_metrics
+  model_name: efficientnet

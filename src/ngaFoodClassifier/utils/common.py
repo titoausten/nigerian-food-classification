@@ -1,14 +1,16 @@
 import os
-from box.exceptions import BoxValueError
 import yaml
-from src.ngaFoodClassifier import logger
+import base64
 import json
 import joblib
+from box.exceptions import BoxValueError
 from ensure import ensure_annotations
 from box import ConfigBox
 from pathlib import Path
 from typing import Any
-import base64
+from src.ngaFoodClassifier import logger
+from torch.hub import load_state_dict_from_url
+
 
 
 @ensure_annotations
@@ -132,3 +134,21 @@ def decodeImage(imgstring, fileName):
 def encodeImageIntoBase64(croppedImagePath):
     with open(croppedImagePath, "rb") as f:
         return base64.b64encode(f.read())
+
+
+def get_state_dict(self, *args, **kwargs):
+    """
+    Get the state dictionary of the model by loading from a URL.
+
+    Args:
+        *args: Additional positional arguments.
+        **kwargs: Additional keyword arguments.
+
+    Returns:
+        state_dict: The state dictionary of the model.
+    """
+    # Remove the 'check_hash' key from kwargs
+    kwargs.pop("check_hash")
+    
+    # Load the state dictionary from the URL
+    return load_state_dict_from_url(self.url, *args, **kwargs)

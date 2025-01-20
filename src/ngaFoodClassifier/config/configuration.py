@@ -3,7 +3,8 @@ import os
 from pathlib import Path
 from src.ngaFoodClassifier.utils.common import read_yaml, create_directories
 from src.ngaFoodClassifier.entity.config_entity import (DataIngestionConfig,
-                                                        DataTransformationConfig)
+                                                        DataTransformationConfig,
+                                                        ModelTrainingConfig)
 
 
 class ConfigurationManager:
@@ -45,8 +46,26 @@ class ConfigurationManager:
             test_data_dir=config.test_data_dir,
             train_tensor_dir=config.train_tensor_dir,
             test_tensor_dir=config.test_tensor_dir,
-            batch_size=self.params.BATCH_SIZE
-        )
-
+            batch_size=self.params.BATCH_SIZE)
+        
         return data_transformation_config
-    
+            
+     
+    def get_model_training_config(self) -> ModelTrainingConfig:
+        config = self.config.model_training
+
+        create_directories([config.root_dir])
+
+        model_training_config = ModelTrainingConfig(
+            root_dir=config.root_dir,
+            source_dir=config.source_dir,
+            source_dir_test=config.source_dir_test,
+            model_dir=config.model_dir,
+            model_metrics_dir=config.model_metrics_dir,
+            batch_size=self.params.BATCH_SIZE,
+            epochs=self.params.NUM_EPOCHS,
+            learning_rate=self.params.LEARNING_RATE,
+            model_name=config.model_name
+            )
+
+        return model_training_config

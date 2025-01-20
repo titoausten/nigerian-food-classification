@@ -3,42 +3,40 @@ from src.ngaFoodClassifier import logger
 from src.ngaFoodClassifier.utils.common import get_size, create_directories
 from src.ngaFoodClassifier.entity.config_entity import DataTransformationConfig
 from torchvision import datasets, transforms
-from torch.utils.data import DataLoader, Dataset
 import torch
-
-
-class TensorDataset(Dataset):
-    def __init__(self, folder_path):
-        # Get all the .pt files from the specified folder
-        self.file_paths = [os.path.join(folder_path, fname) for fname in os.listdir(folder_path) if fname.endswith('.pt')]
-
-    def __len__(self):
-        return len(self.file_paths)
-
-    def __getitem__(self, idx):
-        # Load tensor from the .pt file
-        image, label = torch.load(self.file_paths[idx])
-        return image, label
 
 
 class DataTransformation:
     def __init__(self, config: DataTransformationConfig):
         self.config = config
 
-    def transform_data(self):
-        # Create transforms
-        data_transform = transforms.Compose([
-            transforms.Resize((224,224)), #CHECK FOR RIGHT FIGURES
-            transforms.RandomHorizontalFlip(p=0.5),
-            transforms.RandomRotation(degrees=10),
-            transforms.RandomResizedCrop(size=32, scale=(0.8, 1.0)),
-            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=MEAN, std=STD) #CHECK FOR RIGHT FIGURES
+
+    def get_transforms(self, train=True):
+        """Create consistent transforms for both train and test"""
+        if train:
+            return transforms.Compose([
+                transforms.Resize((224, 224)),
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.RandomRotation(degrees=10),
+                transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=MEAN, std=STD)
+            ])
+        else:
+            return transforms.Compose([
+                transforms.Resize((224, 224)),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=MEAN, std=STD)
             ])
         
-        train_data = datasets.ImageFolder(self.config.train_data_dir, transform=data_transform)
-        test_data = datasets.ImageFolder(self.config.test_data_dir, transform=transforms.ToTensor())
+
+    def transform_data(self):
+        # Create transforms
+        train_transform = self.get_transforms(train=True)
+        test_transform = self.get_transforms(train=False)
+
+        train_data = datasets.ImageFolder(self.config.train_data_dir, transform=train_transform)
+        test_data = datasets.ImageFolder(self.config.test_data_dir, transform=test_transform)
 
         # Save Tensors
         self.save_tensor(train_data, self.config.train_tensor_dir)
@@ -73,34 +71,9 @@ class DataTransformation:
                 logger.info(f"File {image_path} already exists, skipping.")
                 continue
 
+            # Ensure tensor is contiguous and in the correct format
+            image = image.contiguous()
             torch.save((image, label), image_path)
 
             if i % 100 == 0:
                 logger.info(f'Saved {i} tensors to {image_path} folder')
-        
-
-    def create_dataloaders(self):
-
-        # Create custom datasets for loading tensors
-        # train_dataset = TensorDataset(self.config.train_tensor_dir)
-        # test_dataset = TensorDataset(self.config.test_tensor_dir)
-
-        # Create data loaders
-        train_dataloader = DataLoader(self.transform_data()[0],
-                                    batch_size=self.config.batch_size,
-                                    shuffle=True,
-                                    num_workers=NUM_WORKERS,
-                                    pin_memory=True)
-
-        test_dataloader = DataLoader(self.transform_data()[1],
-                                    batch_size=self.config.batch_size,
-                                    shuffle=False,
-                                    num_workers=NUM_WORKERS,
-                                    pin_memory=True)
-
-        # Get class names
-        # class_names = self.transform_data()[0].classes
-        # class_names = train_dataset.classes
-        class_names = datasets.ImageFolder(self.config.train_data_dir).classes
-
-        return train_dataloader, test_dataloader, class_names

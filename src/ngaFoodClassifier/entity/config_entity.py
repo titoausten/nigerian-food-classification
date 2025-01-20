@@ -19,3 +19,16 @@ class DataTransformationConfig:
     train_tensor_dir: str
     test_tensor_dir: str
     batch_size: int
+    
+    
+@dataclass(frozen=True)
+class ModelTrainingConfig:
+    root_dir: Path
+    source_dir: str
+    source_dir_test: str
+    model_dir: str
+    model_metrics_dir: str
+    batch_size: int
+    epochs: int
+    learning_rate: float
+    model_name: str
