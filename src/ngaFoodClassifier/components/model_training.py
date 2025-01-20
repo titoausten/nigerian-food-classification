@@ -135,6 +135,7 @@ class TensorDataset(Dataset):
 class Training:
     def __init__(self, config: ModelTrainingConfig):
         self.config = config
+        self.checkpoint_frequency = 50  # Save model and loss curves every 50 epochs
 
     def train(self):
         """
@@ -214,6 +215,15 @@ class Training:
             results["test_loss"].append(test_loss)
             results["test_acc"].append(test_acc)
 
+            # Save checkpoint every 50 epochs
+            if (epoch + 1) % self.checkpoint_frequency == 0:
+                self.save_model(model, epoch=epoch + 1)
+                logger.info(f"Checkpoint saved at epoch {epoch + 1}")
+
+                self.plot_loss_curves(results, epoch=epoch + 1)
+                logger.info(f"Loss curves saved at epoch {epoch + 1}")
+            
+
         # Save model
         self.save_model(model)
         # Plot loss curves
@@ -226,7 +236,8 @@ class Training:
         return results
     
 
-    def save_model(self, model):
+    def save_model(self, model, epoch=None):
+    #def save_model(self, model):
         """
         Save a PyTorch model to a specified directory with a given model name.
 
@@ -238,22 +249,36 @@ class Training:
         Returns:
             None
         """
-        #target_dir_path = Path(target_dir)
-        #target_dir_path.mkdir(parents=True, exist_ok=True)
+        
         create_directories([self.config.model_dir])
 
+        '''
         model_save_path = os.path.join(self.config.model_dir, self.config.model_name + ".pt")
 
         # If the file already exists, skip or handle differently
         if os.path.exists(model_save_path):
             logger.info(f"File {model_save_path} already exists, skipping.")
-        
+        '''
+        # Create model name with epoch and batch size information
+        if epoch is not None:
+            model_filename = f"{self.config.model_name}_epoch{epoch}_batch{self.config.batch_size}.pt"
+        else:
+            model_filename = f"{self.config.model_name}_main{self.config.epochs}_final_batch{self.config.batch_size}.pt"
+
+        model_save_path = os.path.join(self.config.model_dir, model_filename)
+
+        # If the file already exists, skip or handle differently
+        if os.path.exists(model_save_path):
+            logger.info(f"File {model_save_path} already exists, creating new version.")
+            model_filename = f"{self.config.model_name}_epoch{epoch}_batch{self.config.batch_size}_v2.pt"
+            model_save_path = os.path.join(self.config.model_dir, model_filename)
+
         logger.info(f"Saving model to: {model_save_path}")
         torch.save(obj=model.state_dict(), f=model_save_path)
         logger.info(f'Model saved to {self.config.model_dir} folder')
 
 
-    def plot_loss_curves(self, results):
+    def plot_loss_curves(self, results, epoch=None):
         """
         Plot training and testing loss and accuracy curves.
 
@@ -288,8 +313,16 @@ class Training:
         metrics_save_path = os.path.join(self.config.model_metrics_dir, self.config.model_name)
         create_directories([metrics_save_path])  # Ensure directory exists
 
+
+        # Create model name with epoch and batch size information
+        if epoch is not None:
+            file_name = f"{self.config.model_name}_epoch{epoch}_batch{self.config.batch_size}_training_curves.png"
+        else:
+            file_name = f"{self.config.model_name}_main{self.config.epochs}_batch{self.config.batch_size}_training_curves.png"
+
+
         # Construct full path for the plot file
-        full_save_path = os.path.join(metrics_save_path, self.config.model_name + "_training_curves.png")
+        full_save_path = os.path.join(metrics_save_path, file_name)
 
         # Save the plot
         plt.tight_layout()
