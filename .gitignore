@@ -2,5 +2,6 @@
 /logs
 /.venv
 setup.py
-/artifacts/data_ingestion
-/artifacts/data_transformation
+/artifacts/data_*
+prediction.png
+
