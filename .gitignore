@@ -2,4 +2,5 @@
 /logs
 /.venv
 setup.py
-/artifacts
+/artifacts/data_ingestion
+/artifacts/data_transformation

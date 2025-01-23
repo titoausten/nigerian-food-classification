@@ -14,7 +14,9 @@ class PredictionPipeline:
     
     def predict(self, App=False):
         # Get class labels from the directory structure
-        class_labels = sorted(os.listdir("artifacts/data_transformation/train_tensor"))
+        class_labels = ['akara', 'banga soup', 'edikaikong soup',
+        'egusi soup', 'ewedu soup', 'jollof rice',
+        'masa', 'moimoi', 'ogbono soup', 'okra soup']
 
         # Load the pre-trained model
         model = TransferLearningModel(
@@ -25,10 +27,8 @@ class PredictionPipeline:
         ).get_model()
 
         # Load the state dictionary
-        model.load_state_dict(torch.load("artifacts/training/model/resnet50_epoch100_batch16.pt", map_location=torch.device('cpu')))
+        model.load_state_dict(torch.load("artifacts/training/model/resnet/resnet50_epoch100_batch16.pt", map_location=torch.device('cpu')))
         model.eval()
-        #model = torch.load("artifacts/training/model/resnet50_epoch100_batch16.pt", map_location=torch.device('cpu'))
-        #model.eval()
 
         # Define transformations for image preprocessing
         transform = get_transforms(False)
