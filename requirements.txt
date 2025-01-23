@@ -12,6 +12,6 @@ tqdm
 ensure
 joblib
 types-PyYAML
-#Flask
-#Flask-Cors
+Flask
+Flask-Cors
 #-e .

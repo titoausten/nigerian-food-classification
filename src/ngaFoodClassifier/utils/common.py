@@ -147,8 +147,9 @@ def get_state_dict(self, *args, **kwargs):
     Returns:
         state_dict: The state dictionary of the model.
     """
-    # Remove the 'check_hash' key from kwargs
-    kwargs.pop("check_hash")
+    if "check_hash" in kwargs:
+        # Remove the 'check_hash' key from kwargs
+        kwargs.pop("check_hash")
     
     # Load the state dictionary from the URL
     return load_state_dict_from_url(self.url, *args, **kwargs)

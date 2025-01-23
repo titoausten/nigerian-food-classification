@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nigerian Food Classifier</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+            color: #343a40;
+        }
+        .container-custom {
+            max-width: 900px;
+            margin: 0 auto;
+            padding-top: 50px;
+        }
+        .classification-card {
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        .img-upload-section {
+            background-color: #dfe6e9;
+            padding: 20px;
+            text-align: center;
+        }
+        .image-placeholder {
+            height: 350px;
+            background: url('https://via.placeholder.com/350x350?text=Upload+Image') center / cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            color: #6c757d;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        .image-placeholder img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .btn-upload {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-upload:hover {
+            background-color: #218838;
+        }
+        .btn-predict {
+            background-color: #343a40;
+            border-color: #343a40;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-predict:hover {
+            background-color: #23272b;
+        }
+        .result-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 200px;
+            text-align: center;
+        }
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loader {
+            border: 4px solid #28a745;
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container container-custom">
+        <div class="classification-card">
+            <div class="row no-gutters">
+                <div class="col-md-6 img-upload-section">
+                    <div class="image-placeholder" id="imagePlaceholder">
+                        <p>Upload an image to classify</p>
+                    </div>
+                    <input type="file" id="fileinput" style="display:none;" accept="image/*">
+                    <div class="d-flex justify-content-between">
+                        <button id="uload" class="btn btn-upload btn-block mr-2">Upload</button>
+                        <button id="send" class="btn btn-predict btn-block ml-2">Predict</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="result-section">
+                        <h5 class="text-center mb-3">Prediction Result</h5>
+                        <div id="predictionResult">
+                            <p class="text-muted">Results will appear here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading" style="display:none;">
+        <div class="loader"></div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+    var base_data = "";
+    var uploadedImageUrl = null;
+
+    function sendRequest(base64Data){
+        if(base64Data != "" || base64Data != null){
+            $("#loading").show();
+            $.ajax({
+                url: "../predict",
+                type: "post",
+                contentType: "application/json",
+                data: JSON.stringify({image: base64Data}),
+                success: function(res){
+                    $("#predictionResult").html(`<p class="text-dark font-weight-bold">${res}</p>`);
+                    $("#loading").hide();
+                },
+                error: function() {
+                    $("#predictionResult").html('<p class="text-danger">Error in prediction</p>');
+                    $("#loading").hide();
+                }
+            });
+        }
+    }
+
+    $(document).ready(function(){
+        $('#uload').click(function() {
+            $('#fileinput').click();
+        });
+
+        $("#fileinput").change(function(e){
+            var file = e.target.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function(event) {
+                uploadedImageUrl = event.target.result;
+                $("#imagePlaceholder").html(`<img src="${uploadedImageUrl}" alt="Uploaded Image">`);
+
+                // Create canvas to get base64
+                var img = new Image();
+                img.onload = function() {
+                    var canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    base_data = canvas.toDataURL('image/jpeg', 1.0).replace(/^data:image.+;base64,/, '');
+                };
+                img.src = uploadedImageUrl;
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        $('#send').click(function(){
+            if(base_data) {
+                sendRequest(base_data);
+            } else {
+                $("#predictionResult").html('<p class="text-warning">Please upload an image first</p>');
+            }
+        });
+    });
+    </script>
+</body>
+</html>

@@ -5,11 +5,11 @@ from torch import nn
 from typing import Tuple
 from src.ngaFoodClassifier.constants import *
 from src.ngaFoodClassifier import logger
-from src.ngaFoodClassifier.utils.common import get_size, create_directories
+from src.ngaFoodClassifier.utils.common import create_directories
 from src.ngaFoodClassifier.entity.config_entity import ModelTrainingConfig
 from src.ngaFoodClassifier.utils.transfer_models import TransferLearningModel
 from src.ngaFoodClassifier.constants import *
-from torch.utils.data import DataLoader, Dataset, Subset
+from torch.utils.data import DataLoader, Dataset
 
 
 def train_step(model: nn.Module,
@@ -249,8 +249,10 @@ class Training:
         Returns:
             None
         """
+        model_dir_save_path = os.path.join(self.config.model_dir, self.config.model_name)
+        create_directories([model_dir_save_path])
         
-        create_directories([self.config.model_dir])
+        #create_directories([self.config.model_dir])
 
         '''
         model_save_path = os.path.join(self.config.model_dir, self.config.model_name + ".pt")
@@ -265,13 +267,16 @@ class Training:
         else:
             model_filename = f"{self.config.model_name}_main{self.config.epochs}_final_batch{self.config.batch_size}.pt"
 
-        model_save_path = os.path.join(self.config.model_dir, model_filename)
+        #model_save_path = os.path.join(self.config.model_dir, model_filename)
+
+        model_save_path = os.path.join(model_dir_save_path, model_filename)
 
         # If the file already exists, skip or handle differently
         if os.path.exists(model_save_path):
             logger.info(f"File {model_save_path} already exists, creating new version.")
             model_filename = f"{self.config.model_name}_epoch{epoch}_batch{self.config.batch_size}_v2.pt"
-            model_save_path = os.path.join(self.config.model_dir, model_filename)
+            #model_save_path = os.path.join(self.config.model_dir, model_filename)
+            model_save_path = os.path.join(model_dir_save_path, model_filename)
 
         logger.info(f"Saving model to: {model_save_path}")
         torch.save(obj=model.state_dict(), f=model_save_path)
