@@ -1,3 +1,4 @@
+
 from src.ngaFoodClassifier.pipeline.prediction import PredictionPipeline
 import os
 
@@ -7,11 +8,15 @@ def main():
           2 - Resnet50")
     
     architecture = int(input("\nEnter preferred model architecture: "))
-    image_path =  input("Path to image for prediction: ")
+    image_path =  "test_images"
 
-    prediction = PredictionPipeline(image_path=image_path, architecture=architecture)
-    prediction.predict()
+    for file in os.listdir(image_path):
+        file = os.path.join(image_path, file)
+        prediction = PredictionPipeline(image_path=file, architecture=architecture)
+        prediction.predict()
 
 
 if __name__ == "__main__":
     main()
+
+
